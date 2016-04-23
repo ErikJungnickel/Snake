@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Threading;
+using System.Collections;
 
 /// <summary>
 /// Author: Erik Jungnickel - http://backyard-dev.de
@@ -35,6 +36,7 @@ public class SnakeController : MonoBehaviour
     public int MapHeight = 20;
 
     bool paused = false;
+    bool gameover = false;
 
     // Use this for initialization
     void Start()
@@ -99,7 +101,7 @@ public class SnakeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!paused)
+        if (!paused && !gameover)
         {
             if (parts != null && parts.Count > 0) //make sure everything is setup
             {
@@ -114,8 +116,8 @@ public class SnakeController : MonoBehaviour
                     if (CheckCollision(parts[0].transform.position))
                     {
                         //Gameover
-                        Thread.Sleep(2000);
-                        SceneManager.LoadScene(SceneManager.GetActiveScene().name); //just reload the scene
+                        gameover = true;
+                        StartCoroutine(Wait());
                     }
 
                     //check for food "collisions". 
@@ -141,6 +143,13 @@ public class SnakeController : MonoBehaviour
                 }
             }
         }
+    }
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(2);
+        gameover = false;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     /// <summary>
